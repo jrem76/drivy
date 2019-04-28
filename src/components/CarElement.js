@@ -11,8 +11,10 @@ export default class CarElement extends Component {
 
   render() {
     const {
-        car
+      car,
     } = this.props;
+
+    // console.log(car);
 
     return (
       <div className="carElement">

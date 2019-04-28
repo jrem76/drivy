@@ -8,25 +8,30 @@ export default class List extends Component {
     state = {
         data: null,
         error: false,
+        daysDuration: 0,
+        kmsNumber: 0,
     };
 
     componentDidMount() {
-
-        this.initData();
+        this.initData(0, 0);
     }
 
-    initData = () => {
+    initData = (daysDuration, kmsNumber) => {
         this.setState({
             data: [],
-        })
+        });
 
         request
             .get('/cars.json')
+            .query({
+                duration: daysDuration,
+                distance: kmsNumber,
+            })
             .end((err, res) => {
                 if (res) {
                     this.setState({
                         data: res.body,
-                    })
+                    });
                 }
                 if (err) {
                     this.setState({
@@ -44,12 +49,6 @@ export default class List extends Component {
         this.initData();
     }
 
-    onClearArray = () => {
-        this.setState({
-            data: [],
-        });
-    }
-
     onReloadData = () => {
         this.initData();
     }
@@ -57,21 +56,21 @@ export default class List extends Component {
     renderElementList = () => {
         let elementsList = []
         const {
-            data
+            data,
         } = this.state
 
         if (!data || data.length === 0) {
             return [];
         }
 
-        data.forEach((result, index) => {
-            elementsList.push(<Car car={result} key={index}></Car>)
+        data.forEach((carItem, index) => {
+            elementsList.push(<Car car={carItem} key={index}></Car>)
         });
 
         return elementsList;
     }
 
-    renderList = (data, error) => {
+    renderFilteredList = (data, error) => {
         if (!data || data === null || data.length === 0) {
             return (
                 <div>Nothing to show for now.</div>
@@ -89,6 +88,58 @@ export default class List extends Component {
         </div>);
     }
 
+    onSelectDaysChange = (event) => {
+        const {
+            kmsNumber,
+        } = this.state;
+
+        this.setState({
+            daysDuration: event.target.value,
+        });
+
+        this.initData(event.target.value, kmsNumber);
+    }
+
+    
+
+    renderSelectDays = () => {
+        const {
+            daysDuration,
+        } = this.state;
+
+        const days = [...Array(31).keys()];
+
+        return (<select onChange={this.onSelectDaysChange} value={daysDuration} name="selectDays">
+            {days.map((day, index) => (<option value={day} key={`day-${index}`}>{day}</option>))}
+        </select>)
+    }
+
+    onSelectDistanceChange = (event) => {
+        const {
+            daysDuration,
+        } = this.state;
+
+        this.setState({
+            kmsNumber: event.target.value,
+        });
+
+        this.initData(daysDuration, event.target.value);
+    }
+
+    renderSelectDistance = () => {
+        const {
+            kmsNumber,
+        } = this.state;
+
+        const kmsOptions = [...Array(61).keys()];
+
+        return (<select onChange={this.onSelectDistanceChange} value={kmsNumber} name="selectDistance">
+            {kmsOptions.map((kmsOption, index) => (<
+                option value={kmsOption * 50} key={`kmsOption-${index}`}>{kmsOption * 50}</option>
+            ))}
+        </select>)
+    }
+
     render() {
 
         const {
@@ -97,9 +148,15 @@ export default class List extends Component {
         } = this.state;
 
         return (<div>
-            <button onClick={this.onClearArray}>Reset Array</button>
-            <button onClick={this.onReloadData}>Refresh data</button>
-            {this.renderList(data, error)}
+            <div>
+                <label htmlFor="selectDays">Days duration</label>
+                {this.renderSelectDays()}
+            </div>
+            <div>
+                <label htmlFor="selectDistance">Distance in km</label>
+                {this.renderSelectDistance()}
+            </div>
+            {this.renderFilteredList(data, error)}
         </div>)
     }
 
