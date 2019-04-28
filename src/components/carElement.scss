@@ -1,0 +1,24 @@
+.carElement {
+  display: flex;
+  flex-flow: row nowrap;
+  max-width: 350px;
+  border-radius: 4px;
+  border: solid 1px black;
+  margin: 20px auto;
+
+  &__left-block {
+    flex-basis: 40%;
+    padding: 20px;
+    img {
+      height: 100px;
+    }
+  }
+
+  &__right-block {
+    flex-basis: 60%;
+    display: flex;
+    flex-flow: column;
+    justify-content: space-between;
+    padding: 20px 20px 20px 0;
+  }
+}
