@@ -57,6 +57,8 @@ export default class List extends Component {
         let elementsList = []
         const {
             data,
+            kmsNumber,
+            daysDuration,
         } = this.state
 
         if (!data || data.length === 0) {
@@ -64,7 +66,10 @@ export default class List extends Component {
         }
 
         data.forEach((carItem, index) => {
-            elementsList.push(<Car car={carItem} key={index}></Car>)
+            const rentalPrice = (kmsNumber * (carItem.pricePerKm / 100))
+                + (daysDuration * (carItem.pricePerDay / 100));
+
+            elementsList.push(<Car car={carItem} rentalPrice={rentalPrice.toFixed(2)} key={index}></Car>)
         });
 
         return elementsList;
@@ -134,8 +139,8 @@ export default class List extends Component {
         const kmsOptions = [...Array(61).keys()];
 
         return (<select onChange={this.onSelectDistanceChange} value={kmsNumber} name="selectDistance">
-            {kmsOptions.map((kmsOption, index) => (<
-                option value={kmsOption * 50} key={`kmsOption-${index}`}>{kmsOption * 50}</option>
+            {kmsOptions.map((kmsOption, index) => (
+                <option value={kmsOption * 50} key={`kmsOption-${index}`}>{kmsOption * 50}</option>
             ))}
         </select>)
     }

@@ -7,14 +7,14 @@ import './carElement.scss';
 export default class CarElement extends Component {
   static propTypes = {
     car : PropTypes.object,
+    rentalPrice: PropTypes.string,
   };
 
   render() {
     const {
       car,
+      rentalPrice,
     } = this.props;
-
-    // console.log(car);
 
     return (
       <div className="carElement">
@@ -25,6 +25,7 @@ export default class CarElement extends Component {
           <span>{car.brand} {car.model}</span>
           <span>{car.pricePerDay/100}€ /day</span>
           <span>{car.pricePerKm/100}€ /Km</span>
+          <span>{rentalPrice}€ for the rental</span>
         </div>
       </div>
     )
