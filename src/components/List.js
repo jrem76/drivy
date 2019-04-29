@@ -66,10 +66,21 @@ export default class List extends Component {
         }
 
         data.forEach((carItem, index) => {
-            const rentalPrice = (kmsNumber * (carItem.pricePerKm / 100))
-                + (daysDuration * (carItem.pricePerDay / 100));
+            let discountPrice = 1;
 
-            elementsList.push(<Car car={carItem} rentalPrice={rentalPrice.toFixed(2)} key={index}></Car>)
+            if (daysDuration >= 10) {
+                discountPrice = 0.5;
+            } else if (daysDuration >= 4) {
+                discountPrice = 0.7;
+            } else if (daysDuration >= 1) {
+                discountPrice = 0.9;
+            }
+
+            const oldPrice = carItem.pricePerDay;
+            carItem.pricePerDay = carItem.pricePerDay * discountPrice;
+
+            const rentalPrice = (kmsNumber * (carItem.pricePerKm / 100)) + (daysDuration * (carItem.pricePerDay / 100));
+            elementsList.push(<Car car={carItem} rentalPrice={rentalPrice.toFixed(2)} discountPrice={discountPrice} key={index}></Car>)
         });
 
         return elementsList;
